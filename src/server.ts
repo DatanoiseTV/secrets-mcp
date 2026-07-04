@@ -31,13 +31,24 @@ function ok(payload: unknown): ToolResult {
   };
 }
 
-function fail(err: unknown): ToolResult {
-  const message = err instanceof Error ? err.message : String(err);
-  return { content: [{ type: "text", text: `Error: ${message}` }], isError: true };
-}
-
 export function buildServer(store: Store, version: string): McpServer {
   const server = new McpServer({ name: "secrets-mcp", version });
+
+  /**
+   * Errors thrown after placeholder/entry resolution can embed resolved
+   * secret values — e.g. undici's "invalid header value" and "failed to
+   * parse URL" messages quote the offending string verbatim. Every error
+   * message (and its cause chain) is therefore redacted against the full
+   * vault before it reaches the model, same as successful output.
+   */
+  function fail(err: unknown): ToolResult {
+    let message = err instanceof Error ? err.message : String(err);
+    for (let cause = err instanceof Error ? err.cause : undefined; cause instanceof Error; cause = cause.cause) {
+      message += ` (cause: ${cause.message})`;
+    }
+    message = redact(message, store.allValues());
+    return { content: [{ type: "text", text: `Error: ${message}` }], isError: true };
+  }
 
   server.registerTool(
     "vault_list",

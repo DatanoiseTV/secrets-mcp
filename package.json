@@ -1,6 +1,6 @@
 {
   "name": "secrets-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MCP server and Claude Code plugin for storing and using secrets, certificates, and private keys without exposing their values to the model",
   "type": "module",
   "license": "MIT",

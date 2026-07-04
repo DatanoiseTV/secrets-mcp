@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-07-04
+
+### Fixed
+
+- Security: tool error messages are now redacted against the vault before
+  being returned. Errors thrown after placeholder resolution could embed
+  resolved secret values verbatim — undici's invalid-header-value and
+  failed-to-parse-URL errors quote the offending string, so a vault_http
+  call with, e.g., a multi-line value in a header returned the plaintext
+  to the model. All tool errors (including their cause chains) now pass
+  through the same redaction as successful output.
+
 ## [0.2.0] - 2026-07-04
 
 ### Added
