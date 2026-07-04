@@ -4,5 +4,12 @@
   "description": "Encrypted credential vault: store and use secrets, certificates, and private keys without their values ever entering the model's context",
   "author": {
     "name": "DatanoiseTV"
+  },
+  "mcpServers": {
+    "secrets": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/dist/index.js"]
+    }
   }
 }
