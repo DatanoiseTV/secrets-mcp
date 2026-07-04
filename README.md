@@ -113,6 +113,50 @@ Or just the MCP server, without the plugin:
 $ claude mcp add --scope user secrets -- node /path/to/secrets-mcp/dist/index.js
 ```
 
+## Permissions: skipping the "allow this tool?" prompts
+
+Claude Code asks before every MCP tool call unless the tool is allowlisted.
+For the plugin, the tools are named `mcp__plugin_secrets-mcp_secrets__<tool>`
+(standalone `claude mcp add` install: `mcp__secrets__<tool>`). Add rules to
+`~/.claude/settings.json` (user-wide) or `.claude/settings.json` (per
+project), or interactively via the `/permissions` command.
+
+Recommended allowlist — everything whose consent already happens elsewhere
+or that cannot expose a value:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_secrets-mcp_secrets__vault_list",
+      "mcp__plugin_secrets-mcp_secrets__vault_check",
+      "mcp__plugin_secrets-mcp_secrets__vault_set",
+      "mcp__plugin_secrets-mcp_secrets__vault_import",
+      "mcp__plugin_secrets-mcp_secrets__vault_delete",
+      "mcp__plugin_secrets-mcp_secrets__vault_render",
+      "mcp__plugin_secrets-mcp_secrets__vault_write"
+    ]
+  }
+}
+```
+
+`vault_set`, `vault_import` (with `remove_source`), and `vault_delete` open
+native dialogs — the dialog is the consent, so auto-allowing the tool call
+loses nothing. `vault_list` and `vault_check` return metadata only.
+
+**Deliberately not on the list:**
+
+- `vault_run` — executes arbitrary shell with secrets injected. The
+  permission prompt showing you the command is the backstop against a
+  malicious or confused command extracting a value past the redaction layer
+  (see threat model). Keep it prompted.
+- `vault_http` — sends stored credentials to whatever URL is in the call. A
+  prompt showing the destination is what stands between a stored token and
+  an unintended host. Keep it prompted.
+
+If you accept those risks in a trusted workflow, one rule allows the whole
+server: `"mcp__plugin_secrets-mcp_secrets"`.
+
 ## Environment
 
 | Variable | Effect |
