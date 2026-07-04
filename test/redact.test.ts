@@ -32,6 +32,18 @@ describe("redact", () => {
     expect(redact(`dump:${pem.trim()}`, s)).toBe("dump:[REDACTED:SSH]");
   });
 
+  it("redacts individual lines of multi-line values (head/grep/sed extraction)", () => {
+    const pem = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQ\nqhkiG9w0BAQEFAASCBKcwggSjAg\n-----END PRIVATE KEY-----\n";
+    const s = new Map([["KEY", pem]]);
+    // a single body line, as `sed -n 2p key.pem` would print it
+    expect(redact("line: MIIEvQIBADANBgkqhkiG9w0BAQ", s)).toBe("line: [REDACTED:KEY]");
+    // base64 of a body line
+    const b64 = Buffer.from("MIIEvQIBADANBgkqhkiG9w0BAQ").toString("base64");
+    expect(redact(b64, s)).toBe("[REDACTED:KEY]");
+    // PEM armor lines are structural, not secret — never redacted
+    expect(redact("-----BEGIN PRIVATE KEY-----", s)).toBe("-----BEGIN PRIVATE KEY-----");
+  });
+
   it("skips values too short to redact safely", () => {
     expect(variantsOf("ab")).toEqual([]);
     expect(redact("ab is fine", new Map([["X", "ab"]]))).toBe("ab is fine");
