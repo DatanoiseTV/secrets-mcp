@@ -1,0 +1,15 @@
+{
+  "name": "datanoise",
+  "description": "Plugins by DatanoiseTV",
+  "owner": {
+    "name": "DatanoiseTV"
+  },
+  "plugins": [
+    {
+      "name": "secrets-mcp",
+      "source": "./",
+      "description": "Encrypted credential vault: store and use secrets, certificates, and private keys without their values ever entering the model's context",
+      "version": "0.1.0"
+    }
+  ]
+}
