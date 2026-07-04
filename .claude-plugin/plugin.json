@@ -1,0 +1,8 @@
+{
+  "name": "secrets-mcp",
+  "version": "0.1.0",
+  "description": "Encrypted credential vault: store and use secrets, certificates, and private keys without their values ever entering the model's context",
+  "author": {
+    "name": "DatanoiseTV"
+  }
+}
