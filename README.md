@@ -98,11 +98,13 @@ $ secrets-vault rm old-token --scope project
 $ npm install && npm run build
 ```
 
-As a Claude Code plugin (MCP server + guard hook + skill):
+As a Claude Code plugin (MCP server + guard hook + skill). Plugins install
+from marketplaces, and this repo self-hosts as one:
 
 ```console
-$ claude --plugin-dir /path/to/secrets-mcp        # try it
-$ claude plugin install /path/to/secrets-mcp --scope user
+$ claude --plugin-dir /path/to/secrets-mcp        # try it without installing
+$ claude plugin marketplace add /path/to/secrets-mcp
+$ claude plugin install secrets-mcp@datanoise --scope user
 ```
 
 Or just the MCP server, without the plugin:
