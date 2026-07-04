@@ -1,6 +1,6 @@
 {
   "name": "secrets-mcp",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "MCP server and Claude Code plugin for storing and using secrets, certificates, and private keys without exposing their values to the model",
   "type": "module",
   "license": "MIT",
@@ -18,7 +18,7 @@
     ".mcp.json"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && chmod +x dist/index.js dist/cli.js",
+    "build": "tsc -p tsconfig.json --noEmit && esbuild src/index.ts src/cli.ts --bundle --platform=node --format=esm --target=node20 --outdir=dist --banner:js=\"import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);\" --log-level=warning && chmod +x dist/index.js dist/cli.js",
     "test": "vitest run",
     "prepare": "npm run build"
   },
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "esbuild": "^0.28.1",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }

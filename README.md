@@ -103,10 +103,21 @@ As a Claude Code plugin (MCP server + guard hook + skill). Plugins install
 from marketplaces, and this repo self-hosts as one:
 
 ```console
+$ claude plugin marketplace add DatanoiseTV/secrets-mcp
+$ claude plugin install secrets-mcp@datanoise --scope user
+```
+
+From a local clone (development):
+
+```console
 $ claude --plugin-dir /path/to/secrets-mcp        # try it without installing
 $ claude plugin marketplace add /path/to/secrets-mcp
 $ claude plugin install secrets-mcp@datanoise --scope user
 ```
+
+Both paths work out of the box: `dist/` is a committed, self-contained
+esbuild bundle with no runtime dependencies — installing the plugin requires
+no npm step, only Node >= 20 on PATH.
 
 Or just the MCP server, without the plugin:
 

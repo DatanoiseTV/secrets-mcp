@@ -9,7 +9,7 @@
       "name": "secrets-mcp",
       "source": "./",
       "description": "Encrypted credential vault: store and use secrets, certificates, and private keys without their values ever entering the model's context",
-      "version": "0.2.1"
+      "version": "0.2.2"
     }
   ]
 }

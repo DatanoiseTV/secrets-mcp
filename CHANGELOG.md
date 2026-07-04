@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] - 2026-07-04
+
+### Changed
+
+- `dist/` is now a committed, self-contained esbuild bundle (no runtime
+  dependencies), so installing the plugin from the GitHub marketplace
+  works without an npm build step. Previously `dist/` was gitignored and
+  a GitHub install produced a server that could not start.
+
 ## [0.2.1] - 2026-07-04
 
 ### Fixed
