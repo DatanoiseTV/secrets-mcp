@@ -68,6 +68,7 @@ transcripts.
 | `vault_http` | HTTP request with `{{vault:NAME}}` placeholders in URL/headers/body; response redacted |
 | `vault_render` | Render a template (`{{vault:NAME}}`) to a 0600 file; output path guarded |
 | `vault_write` | Materialize one entry to a permanent path (installing certs/keys); path guarded |
+| `vault_cleanup` | Delete rendered files and release them from the guard (only guard-registered paths; `list: true` shows them) |
 | `vault_check` | Leak check: report whether text contains any stored value in any common encoding |
 
 Example — the model deploys over SSH without ever holding the key:
@@ -134,7 +135,8 @@ or that cannot expose a value:
       "mcp__plugin_secrets-mcp_secrets__vault_import",
       "mcp__plugin_secrets-mcp_secrets__vault_delete",
       "mcp__plugin_secrets-mcp_secrets__vault_render",
-      "mcp__plugin_secrets-mcp_secrets__vault_write"
+      "mcp__plugin_secrets-mcp_secrets__vault_write",
+      "mcp__plugin_secrets-mcp_secrets__vault_cleanup"
     ]
   }
 }

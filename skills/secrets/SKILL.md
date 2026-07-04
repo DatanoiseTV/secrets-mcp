@@ -92,6 +92,13 @@ vault_render {
 nginx cert dir): `vault_write`. Prefer `vault_run` with `files` when the
 material is only needed for one command.
 
+**Removing rendered files**: files written by `vault_render` / `vault_write`
+are guard-locked — `rm`, Read, and Edit on them are denied. To delete one (or
+all) when no longer needed, use `vault_cleanup { path }` / `{ all: true }`;
+it deletes the file and releases the guard. `{ list: true }` shows what is
+currently registered. Clean up rendered files when a task is done rather than
+leaving secret material on disk.
+
 **Pre-commit / pre-post leak check**: `vault_check { text }` reports whether
 any vault value (in any common encoding) appears in the text.
 

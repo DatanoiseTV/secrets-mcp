@@ -25,13 +25,28 @@ export function registerRenderedPath(p: string): void {
   const manifest = load();
   if (!manifest.paths.includes(abs)) {
     manifest.paths.push(abs);
-    fs.mkdirSync(vaultHome(), { recursive: true, mode: 0o700 });
-    fs.writeFileSync(manifestFile(), JSON.stringify(manifest, null, 2) + "\n", {
-      mode: 0o600,
-    });
+    save(manifest);
   }
 }
 
 export function renderedPaths(): string[] {
   return load().paths;
+}
+
+function save(manifest: Manifest): void {
+  fs.mkdirSync(vaultHome(), { recursive: true, mode: 0o700 });
+  fs.writeFileSync(manifestFile(), JSON.stringify(manifest, null, 2) + "\n", {
+    mode: 0o600,
+  });
+}
+
+/** Remove a path from the manifest; returns false if it was not registered. */
+export function unregisterRenderedPath(p: string): boolean {
+  const abs = path.resolve(p);
+  const manifest = load();
+  const idx = manifest.paths.indexOf(abs);
+  if (idx === -1) return false;
+  manifest.paths.splice(idx, 1);
+  save(manifest);
+  return true;
 }

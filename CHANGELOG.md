@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-07-04
+
+### Added
+
+- `vault_cleanup` tool: delete files produced by `vault_render` /
+  `vault_write` and release them from the guard hook. Previously
+  guard-registered files had no in-band removal path — the guard denied
+  `rm` along with reads. Only manifest-registered paths can be targeted.
+
 ## [0.1.0] - 2026-07-04
 
 ### Added

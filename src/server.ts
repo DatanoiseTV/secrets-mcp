@@ -4,7 +4,7 @@ import path from "node:path";
 import { z } from "zod";
 import { confirmAction, promptSecret } from "./dialog.js";
 import { httpWithSecrets } from "./http.js";
-import { registerRenderedPath } from "./manifest.js";
+import { registerRenderedPath, renderedPaths, unregisterRenderedPath } from "./manifest.js";
 import { redact } from "./redact.js";
 import { runWithSecrets } from "./run.js";
 import type { Store } from "./store.js";
@@ -301,6 +301,47 @@ export function buildServer(store: Store, version: string): McpServer {
           mode: "0600",
           note: "file contains secret material; it is registered with the guard hook and must not be read back",
         });
+      } catch (e) {
+        return fail(e);
+      }
+    }
+  );
+
+  server.registerTool(
+    "vault_cleanup",
+    {
+      description:
+        "Delete files previously produced by vault_render / vault_write and release them from the " +
+        "guard hook. Only guard-registered paths can be targeted — this cannot delete arbitrary files. " +
+        "Pass a specific path, or all=true to remove every rendered file. Rendered files are derived " +
+        "output and can always be regenerated from the vault.",
+      inputSchema: {
+        path: z.string().optional().describe("One rendered file to delete and unregister"),
+        all: z.boolean().default(false).describe("Delete and unregister every rendered file"),
+        list: z.boolean().default(false).describe("Only list currently registered rendered paths"),
+      },
+    },
+    async ({ path: target, all, list }) => {
+      try {
+        if (list) return ok({ registered: renderedPaths() });
+        if ((target === undefined) === !all) {
+          throw new Error("provide exactly one of path or all=true (or list=true)");
+        }
+        const targets = all ? renderedPaths() : [path.resolve(target!)];
+        const removed: string[] = [];
+        const alreadyGone: string[] = [];
+        for (const p of targets) {
+          if (!unregisterRenderedPath(p)) {
+            throw new Error(`${p} is not a registered rendered file`);
+          }
+          if (fs.existsSync(p)) {
+            fs.rmSync(p);
+            removed.push(p);
+          } else {
+            alreadyGone.push(p);
+          }
+        }
+        return ok({ removed, alreadyGone });
       } catch (e) {
         return fail(e);
       }
